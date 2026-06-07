@@ -325,3 +325,49 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
         cargarNotasDesdeNube();
     });
 });
+// ==========================================
+// 7. SCRIPT ADICIONAL PARA MENÚ RESPONSIVO (MÓVIL)
+// ==========================================
+
+// Capturar los elementos del menú lateral y botones
+const sidebar = document.getElementById("sidebar");
+const openSidebarBtn = document.getElementById("open-sidebar-btn");
+const closeSidebarBtn = document.getElementById("close-sidebar-btn");
+
+// Función para abrir la barra lateral
+if (openSidebarBtn && sidebar) {
+    openSidebarBtn.addEventListener("click", () => {
+        sidebar.classList.remove("-translate-x-full");
+    });
+}
+
+// Función para cerrar la barra lateral
+if (closeSidebarBtn && sidebar) {
+    closeSidebarBtn.addEventListener("click", () => {
+        sidebar.classList.add("-translate-x-full");
+    });
+}
+// ==========================================
+// 8. SCRIPT ADICIONAL PARA MODO OSCURO (DARK MODE)
+// ==========================================
+
+const themeToggleBtn = document.getElementById("theme-toggle");
+const themeIcon = document.getElementById("theme-icon");
+const htmlElement = document.documentElement;
+
+if (themeToggleBtn) {
+    themeToggleBtn.addEventListener("click", () => {
+        // Alternar la clase 'dark' en la etiqueta <html>
+        htmlElement.classList.toggle("dark");
+        
+        // Cambiar el icono visual de la luna al sol dependiendo del modo
+        if (htmlElement.classList.contains("dark")) {
+            themeIcon.setAttribute("data-lucide", "sun");
+        } else {
+            themeIcon.setAttribute("data-lucide", "moon");
+        }
+        
+        // Forzar a Lucide a actualizar el dibujo del icono en la pantalla
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+}
