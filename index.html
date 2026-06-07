@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloc de Notas Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--color-primary)',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+    <div id="auth-view" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 hidden">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md glassmorphism">
+            <div class="text-center mb-8">
+                <i data-lucide="book-open" class="w-12 h-12 mx-auto text-primary mb-2"></i>
+                <h1 class="text-2xl font-bold">Bloc de Notas Pro</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400" id="auth-subtitle">Inicia sesión en tu cuenta</p>
+            </div>
+
+            <form id="auth-form" class="space-y-4">
+                <div id="register-fields" class="hidden">
+                    <label class="block text-sm font-medium mb-1">Nombre para mostrar</label>
+                    <input type="text" id="auth-name" class="w-full p-3 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition" placeholder="Tu nombre">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Correo Electrónico</label>
+                    <input type="email" id="auth-email" required class="w-full p-3 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition" placeholder="correo@ejemplo.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Contraseña</label>
+                    <input type="password" id="auth-password" required class="w-full p-3 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-primary text-white p-3 rounded-lg font-medium hover:opacity-90 transition">Entrar</button>
+            </form>
+            <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                <span id="auth-toggle-text">¿No tienes cuenta?</span> 
+                <button id="toggle-auth-btn" class="text-primary font-medium hover:underline">Regístrate</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="app-view" class="h-screen flex overflow-hidden hidden">
+        
+        <aside class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative z-20 h-full" id="sidebar">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-primary"></i>
+                    <span class="font-bold text-lg" id="user-display-name">Usuario</span>
+                </div>
+                <button id="close-sidebar-btn" class="md:hidden"><i data-lucide="x"></i></button>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <button class="nav-btn active w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" data-filter="all">
+                    <i data-lucide="home" class="w-5 h-5"></i> Todas las notas
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" data-filter="important">
+                    <i data-lucide="star" class="w-5 h-5"></i> Importantes
+                </button>
+                
+                <div class="pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Categorías</div>
+                <button class="nav-btn w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" data-filter="Personal">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div> Personal
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" data-filter="Escuela">
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div> Escuela
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" data-filter="Trabajo">
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div> Trabajo
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" data-filter="Otras">
+                    <div class="w-3 h-3 rounded-full bg-gray-500"></div> Otras
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+                <button id="settings-btn" class="w-full flex items-center gap-3 p-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary transition">
+                    <i data-lucide="settings" class="w-4 h-4"></i> Configuración
+                </button>
+                <button id="logout-btn" class="w-full flex items-center gap-3 p-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-full relative">
+            <header class="bg-white dark:bg-gray-800 p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-4 z-10">
+                <button id="open-sidebar-btn" class="md:hidden"><i data-lucide="menu"></i></button>
+                <div class="flex-1 relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                    <input type="text" id="search-input" class="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary transition" placeholder="Buscar notas...">
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <i data-lucide="moon" id="theme-icon"></i>
+                </button>
+            </header>
+
+            <div class="px-6 pt-6 grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-stats">
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-sm text-gray-500 mb-1">Total Notas</p>
+                    <p class="text-2xl font-bold" id="stat-total">0</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-sm text-gray-500 mb-1">Importantes</p>
+                    <p class="text-2xl font-bold text-yellow-500" id="stat-important">0</p>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="notes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    </div>
+            </div>
+
+            <button id="new-note-btn" class="absolute bottom-8 right-8 bg-primary text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-4 focus:ring-primary focus:ring-opacity-50">
+                <i data-lucide="plus" class="w-6 h-6"></i>
+            </button>
+        </main>
+    </div>
+
+    <div id="note-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="note-modal-content">
+            <div class="p-6 space-y-4">
+                <input type="text" id="note-title" class="w-full text-2xl font-bold bg-transparent border-none outline-none placeholder-gray-400" placeholder="Título de la nota">
+                
+                <div class="flex flex-wrap gap-4 text-sm">
+                    <select id="note-category" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1 outline-none border-r-8 border-transparent">
+                        <option value="Personal">Personal</option>
+                        <option value="Escuela">Escuela</option>
+                        <option value="Trabajo">Trabajo</option>
+                        <option value="Otras">Otras</option>
+                    </select>
+                    <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <input type="date" id="note-date" class="bg-transparent outline-none">
+                    </div>
+                    <button id="toggle-pin-btn" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition" title="Fijar nota">
+                        <i data-lucide="pin" id="pin-icon" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+                    <button id="toggle-star-btn" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition" title="Marcar importante">
+                        <i data-lucide="star" id="star-icon" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+                </div>
+
+                <textarea id="note-content" class="w-full h-64 bg-transparent resize-none outline-none mt-4 text-gray-700 dark:text-gray-300" placeholder="Escribe tu nota aquí..."></textarea>
+            </div>
+            
+            <div class="bg-gray-50 dark:bg-gray-700/50 p-4 border-t border-gray-200 dark:border-gray-600 flex justify-between items-center">
+                <div class="text-xs text-gray-500 dark:text-gray-400" id="note-timestamp">Última edición: Ahora</div>
+                <div class="flex gap-2">
+                    <button id="export-note-btn" class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Exportar
+                    </button>
+                    <button id="cancel-note-btn" class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition">Cancelar</button>
+                    <button id="save-note-btn" class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition shadow-md">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <h2 class="text-xl font-bold mb-6">Configuración</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Tema de Color</label>
+                    <div class="flex gap-3" id="color-selector">
+                        <button class="w-8 h-8 rounded-full bg-[#3b82f6] ring-offset-2 ring-2 ring-transparent focus:ring-[#3b82f6]" data-color="#3b82f6" title="Azul"></button>
+                        <button class="w-8 h-8 rounded-full bg-[#800020] ring-offset-2 ring-2 ring-transparent focus:ring-[#800020]" data-color="#800020" title="Burdeos"></button>
+                        <button class="w-8 h-8 rounded-full bg-[#1c5034] ring-offset-2 ring-2 ring-transparent focus:ring-[#1c5034]" data-color="#1c5034" title="Verde Bosque"></button>
+                        <button class="w-8 h-8 rounded-full bg-[#8b5cf6] ring-offset-2 ring-2 ring-transparent focus:ring-[#8b5cf6]" data-color="#8b5cf6" title="Púrpura"></button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">Cambiar Nombre</label>
+                    <input type="text" id="settings-name" class="w-full p-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 outline-none">
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-2">
+                <button id="close-settings-btn" class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">Cerrar</button>
+                <button id="save-settings-btn" class="px-4 py-2 bg-primary text-white rounded-lg transition">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
